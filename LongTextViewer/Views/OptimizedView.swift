@@ -43,30 +43,39 @@ struct OptimizedView: View {
         }
         .padding()
         .task {
-            let indices = Constants.longText2.indices(of: "\n")
-            print("Number of indices: \(indices.ranges.count)")
-            var isStart: Bool = true
-            var startIndex: String.Index?
-            var endIndex: String.Index?
-            stride(from: 0, through: indices.ranges.count - 1, by: 5).forEach { index in
-                if isStart {
-                    startIndex = indices.ranges[index].lowerBound
-                } else {
-                    endIndex = indices.ranges[index].upperBound
-                    if let startIndex, let endIndex = endIndex {
-                        let chunk = String(Constants.longText2[startIndex..<endIndex])
-                        textChunks.append(chunk)
-                    }
-                }
-                isStart.toggle()
-            }
-            
-            if let lastRange = indices.ranges.last, lastRange.upperBound != endIndex {
-                textChunks.append(String(Constants.longText2[lastRange.upperBound...]))
-            }
-            
-            visibleChunks.append(textChunks.removeFirst())
+            chunkUpText(input: Constants.longText1,
+                        textChunks: &textChunks,
+                        visibleChunks: &visibleChunks,
+                        strideLength: 5)
         }
+    }
+    
+    private func chunkUpText(input: String,
+                             textChunks: inout [String],
+                             visibleChunks: inout [String], strideLength: Int) {
+        let indices = input.indices(of: "\n")
+        print("Number of indices: \(indices.ranges.count)")
+        var isStart: Bool = true
+        var startIndex: String.Index?
+        var endIndex: String.Index?
+        stride(from: 0, through: indices.ranges.count - 1, by: strideLength).forEach { index in
+            if isStart {
+                startIndex = indices.ranges[index].lowerBound
+            } else {
+                endIndex = indices.ranges[index].upperBound
+                if let startIndex, let endIndex = endIndex {
+                    let chunk = String(input[startIndex..<endIndex])
+                    textChunks.append(chunk)
+                }
+            }
+            isStart.toggle()
+        }
+        
+        if let lastRange = indices.ranges.last, lastRange.upperBound != endIndex {
+            textChunks.append(String(input[lastRange.upperBound...]))
+        }
+        
+        visibleChunks.append(textChunks.removeFirst())
     }
     
     private func fetchNext() async {
