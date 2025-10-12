@@ -30,9 +30,7 @@ struct OptimizedView: View {
             }
             
             if !visibleChunks.isEmpty {
-                Rectangle()
-                    .background(Color.clear)
-                    .foregroundStyle(Color.clear)
+                invisibleView
                     .onBecomingVisible {
                         Task {
                             await fetchNext()
@@ -48,6 +46,12 @@ struct OptimizedView: View {
                         visibleChunks: &visibleChunks,
                         strideLength: 5)
         }
+    }
+    
+    private var invisibleView: some View {
+        Rectangle()
+            .background(Color.clear)
+            .foregroundStyle(Color.clear)
     }
     
     /// Splits the given text into smaller parts, separated by the break-line character (`\n`).
