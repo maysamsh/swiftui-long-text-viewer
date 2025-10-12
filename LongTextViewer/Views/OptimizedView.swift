@@ -43,17 +43,22 @@ struct OptimizedView: View {
         }
         .padding()
         .task {
-            chunkUpText(input: Constants.longText1,
+            splitText(input: Constants.longText3,
                         textChunks: &textChunks,
                         visibleChunks: &visibleChunks,
                         strideLength: 5)
         }
     }
     
-    private func chunkUpText(input: String,
+    private func splitText(input: String,
                              textChunks: inout [String],
-                             visibleChunks: inout [String], strideLength: Int) {
+                             visibleChunks: inout [String],
+                             strideLength: Int) {
         let indices = input.indices(of: "\n")
+        if indices.ranges.count <= strideLength {
+            visibleChunks = [input]
+            return
+        }
         print("Number of indices: \(indices.ranges.count)")
         var isStart: Bool = true
         var startIndex: String.Index?
