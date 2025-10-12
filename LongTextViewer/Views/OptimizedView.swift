@@ -50,6 +50,12 @@ struct OptimizedView: View {
         }
     }
     
+    /// Splits the given text into smaller parts, separated by the break-line character (`\n`).
+    /// - Parameters:
+    ///   - input: Input text
+    ///   - textChunks: An array to represent the input the text.
+    ///   - visibleChunks: An array of string that's used as the data source for the text on screen.
+    ///   - strideLength: The number of pieces separated by the break-line character that becomes an item in `textChunks`.
     private func splitText(input: String,
                              textChunks: inout [String],
                              visibleChunks: inout [String],
@@ -83,20 +89,15 @@ struct OptimizedView: View {
         visibleChunks.append(textChunks.removeFirst())
     }
     
+    /// Fetches the next chunk of text and appends it to the visible array, with a 200ms delay
     private func fetchNext() async {
         guard !textChunks.isEmpty else {
             return
         }
         
-        withAnimation {
-            shouldShowProgressView = true
-        }
-        
+        shouldShowProgressView = true
         try? await Task.sleep(nanoseconds: 200_000_000)
-        
-        withAnimation {
-            visibleChunks.append(textChunks.removeFirst())
-            shouldShowProgressView = false
-        }
+        visibleChunks.append(textChunks.removeFirst())
+        shouldShowProgressView = false
     }
 }
