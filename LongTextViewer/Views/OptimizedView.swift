@@ -9,42 +9,46 @@ import SwiftUI
 
 struct OptimizedView: View {
     let title: String
-    @State var textChunks: [String] = []
-    @State var visibleChunks: [String] = []
-    @State var shouldShowProgressView: Bool = false
+    @StateObject private var viewModel: OptimizedViewModel = .init()
     
     var body: some View {
         ScrollView {
-            Text(title)
-            Divider()
-            ForEach(visibleChunks, id: \.self) { text in
-                Text(text)
-                    .disabled(true)
-                    .lineLimit(nil)
-            }
-            
-            if shouldShowProgressView {
-                HStack {
-                    ProgressView()
+            VStack(alignment: .leading, spacing: .zero) {
+                Text(title)
+                Divider()
+                ForEach(viewModel.visibleChunks) { text in
+                    Text(text.text)
+                        .disabled(true)
+                        .lineLimit(nil)
+                }
+                if !viewModel.visibleChunks.isEmpty {
+                    invisibleView
+                        .onBecomingVisible {
+                            Task {
+                                await viewModel.fetchNext()
+                            }
+                        }
                 }
             }
-            
-            if !visibleChunks.isEmpty {
-                invisibleView
-                    .onBecomingVisible {
-                        Task {
-                            await fetchNext()
-                        }
-                    }
-            }
-            
+            .contentHeight(bind: $viewModel.contentHeight)
         }
+        .contentHeight(bind: $viewModel.scrollViewHeight)
         .padding()
+        .onChange(of: viewModel.visibleChunks, { _, _ in
+            /// If the text is not large enough after the first call to `fetchNext()` the view
+            /// keeps fetching content until the content size of the scroll view is large enough
+            /// to work with the fetch logic or all the content is shown
+            if viewModel.needsScrolling == false, viewModel.textChunks.isEmpty == false {
+                Task {
+                    await viewModel.fetchNext()
+                }
+            }
+        })
         .task {
-            splitText(input: Constants.longText3,
-                        textChunks: &textChunks,
-                        visibleChunks: &visibleChunks,
-                        strideLength: 5)
+            viewModel.splitText(input: Constants.longText1, textChunks: &viewModel.textChunks, strideLength: 5)
+            if !viewModel.textChunks.isEmpty {
+                viewModel.visibleChunks.append(viewModel.textChunks.removeFirst())
+            }
         }
     }
     
@@ -53,55 +57,5 @@ struct OptimizedView: View {
             .background(Color.clear)
             .foregroundStyle(Color.clear)
     }
-    
-    /// Splits the given text into smaller parts, separated by the break-line character (`\n`).
-    /// - Parameters:
-    ///   - input: Input text
-    ///   - textChunks: An array to represent the input the text.
-    ///   - visibleChunks: An array of string that's used as the data source for the text on screen.
-    ///   - strideLength: The number of pieces separated by the break-line character that becomes an item in `textChunks`.
-    private func splitText(input: String,
-                             textChunks: inout [String],
-                             visibleChunks: inout [String],
-                             strideLength: Int) {
-        let indices = input.indices(of: "\n")
-        if indices.ranges.count <= strideLength {
-            visibleChunks = [input]
-            return
-        }
-        print("Number of indices: \(indices.ranges.count)")
-        var isStart: Bool = true
-        var startIndex: String.Index?
-        var endIndex: String.Index?
-        stride(from: 0, through: indices.ranges.count - 1, by: strideLength).forEach { index in
-            if isStart {
-                startIndex = indices.ranges[index].lowerBound
-            } else {
-                endIndex = indices.ranges[index].upperBound
-                if let startIndex, let endIndex = endIndex {
-                    let chunk = String(input[startIndex..<endIndex])
-                    textChunks.append(chunk)
-                }
-            }
-            isStart.toggle()
-        }
-        
-        if let lastRange = indices.ranges.last, lastRange.upperBound != endIndex {
-            textChunks.append(String(input[lastRange.upperBound...]))
-        }
-        
-        visibleChunks.append(textChunks.removeFirst())
-    }
-    
-    /// Fetches the next chunk of text and appends it to the visible array, with a 200ms delay
-    private func fetchNext() async {
-        guard !textChunks.isEmpty else {
-            return
-        }
-        
-        shouldShowProgressView = true
-        try? await Task.sleep(nanoseconds: 200_000_000)
-        visibleChunks.append(textChunks.removeFirst())
-        shouldShowProgressView = false
-    }
 }
+
