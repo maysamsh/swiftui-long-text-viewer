@@ -60,7 +60,6 @@ final class OptimizedViewModel: ObservableObject {
         guard !textChunks.isEmpty else {
             return
         }
-        try? await Task.sleep(nanoseconds: 10_000_000)
         visibleChunks.append(textChunks.removeFirst())
     }
 }

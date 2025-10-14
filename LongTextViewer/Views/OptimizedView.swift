@@ -25,6 +25,7 @@ struct OptimizedView: View {
                     invisibleView
                         .onBecomingVisible {
                             Task {
+                                try? await Task.sleep(nanoseconds: 10_000_000)
                                 await viewModel.fetchNext()
                             }
                         }
@@ -40,6 +41,7 @@ struct OptimizedView: View {
             /// to work with the fetch logic or all the content is shown
             if viewModel.needsScrolling == false, viewModel.textChunks.isEmpty == false {
                 Task {
+                    try? await Task.sleep(nanoseconds: 10_000_000)
                     await viewModel.fetchNext()
                 }
             }

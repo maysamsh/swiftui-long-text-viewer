@@ -29,8 +29,25 @@ struct LongTextViewerTests {
     """
     let sut: OptimizedViewModel = .init()
     
-    @Test func reconstruct() async throws {
-        // adding tests
+    @MainActor
+    @Test func reconstructSmallStride() throws {
+        sut.splitText(input: text, textChunks: &sut.textChunks, strideLength: 2)
+        #expect(sut.textChunks.count == 8)
+        let reconstructedText = sut.textChunks
+            .map { $0.text }
+            .joined()
+        
+        #expect(reconstructedText == text)
     }
 
+    @MainActor
+    @Test func reconstructLargeStride() throws {
+        sut.splitText(input: text, textChunks: &sut.textChunks, strideLength: 20)
+        #expect(sut.textChunks.count == 1)
+        let reconstructedText = sut.textChunks
+            .map { $0.text }
+            .joined()
+        
+        #expect(reconstructedText == text)
+    }
 }
