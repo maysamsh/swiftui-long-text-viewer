@@ -16,8 +16,8 @@ struct OptimizedView: View {
             VStack(alignment: .leading, spacing: .zero) {
                 Text(title)
                 Divider()
-                ForEach(viewModel.visibleChunks) { text in
-                    Text(text.text)
+                ForEach(viewModel.visibleChunks) { item in
+                    Text(item.text)
                         .disabled(true)
                         .lineLimit(nil)
                 }

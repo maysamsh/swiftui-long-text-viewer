@@ -10,22 +10,22 @@ import Testing
 
 struct LongTextViewerTests {
     let text: String = """
-    1Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                2Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                3Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                4Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                5Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                6Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                7Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                8Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                9Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                10Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                11Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                12Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                13Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                14Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                15Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                16Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    2 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    3 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    4 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    5 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    6 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    7 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    8 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    9 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    10 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    11 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    12 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    13 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    14 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    15 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    16 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
     """
     let sut: OptimizedViewModel = .init()
     
@@ -36,7 +36,9 @@ struct LongTextViewerTests {
         let reconstructedText = sut.textChunks
             .map { $0.text }
             .joined()
-        
+        print(sut.textChunks[0].text)
+        print(sut.textChunks.last!.text)
+
         #expect(reconstructedText == text)
     }
 

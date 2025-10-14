@@ -48,7 +48,6 @@ final class OptimizedViewModel: ObservableObject {
                 textChunks.append(IdentifiableText(text: chunk))
                 startIndex =  indices.ranges[index].upperBound
             }
-            
         }
         if let endIndex, endIndex < input.endIndex {
             textChunks.append(IdentifiableText(text: String(input[endIndex...])))
