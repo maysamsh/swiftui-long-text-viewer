@@ -24,3 +24,4 @@ To get around that, I split the input text into smaller parts and only show a fe
 
 This way, the scroll view has enough time to layout its children without blocking the UI.
 
+Read the article here https://maysamsh.me/2025/10/13/lazy-text-rendering-for-large-texts-in-swiftui/
